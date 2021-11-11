@@ -18,6 +18,10 @@ export default function RecordComponent(props) {
             handleClose()
         }
     }
+    function EditRecords(){
+        recordData.ChangeModeToEdit(data)
+        recordData.GetIdToEdit(data.id)
+    }
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -80,7 +84,7 @@ export default function RecordComponent(props) {
                     <span style={{marginRight:5}}>حذف</span>
                     <DeleteForeverIcon/>
                 </Button>
-                <Button onClick={()=>{}} variant="text" style={{color:'#ffa82e'}}>
+                <Button onClick={()=>EditRecords()} variant="text" style={{color:'#ffa82e'}}>
                     <span style={{marginRight:5}}>ویرایش</span>
                     <EditIcon/>
                 </Button>

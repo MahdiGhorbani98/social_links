@@ -48,3 +48,8 @@ body{
      border-radius: 7px !important;
      color: rgb(233, 233, 233) !important;
     }
+.MuiFormHelperText-root{
+    color: #f7f7f7 !important;
+    font-family: 'Vazir', sans-serif !important
+
+}

@@ -1,5 +1,5 @@
 import { Box, Typography, Button, TextField, Collapse} from '@material-ui/core'
-import React,{createContext, useState} from 'react'
+import React,{useEffect,createContext, useState ,useRef} from 'react'
 // import { makeStyles } from '@mui/styles';
 import {createTheme, ThemeProvider } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
@@ -12,11 +12,20 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import LanguageIcon from '@mui/icons-material/Language';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import RecordComponent from './RecordComponent'
+import EditIcon from '@mui/icons-material/Edit';
 
 export const RecordContext = createContext()
 
 export default function UserAccount() {
     const [record, setRecord] = React.useState([]);
+    const [id, setId] = React.useState(0);
+    const [getIdToEdit, setGetIdToEdit] = React.useState();
+    const [Social_id_Edit, setSocial_id_Edit] = React.useState();
+    const [Social_link_Edit, setSocial_link_Edit] = React.useState();
+    const [Social_type_Edit, setSocial_type_Edit] = React.useState();
+    const inputRef = useRef();
+
+    const [add, setAdd] = React.useState(true);
     const [social, setSocial] = React.useState('');
     const [socialIcon, setSocialIcon] = React.useState('');
     const handleChange = (event) => {
@@ -28,6 +37,9 @@ export default function UserAccount() {
             }
         }
     };
+    // const handleChangeID = (event) => {
+    //     setRecord_to_edit(event.target.value );
+    // };
     const socials = [
         {
           value: 'اینستاگرام',
@@ -61,6 +73,21 @@ export default function UserAccount() {
 
 
     let [collapseBool , setCollapseBool] = useState(false)
+    
+    // function ChangeModeToAdd(){
+    //     setAdd(true)
+    // }
+    function ChangeModeToAdd(){
+        setAdd(true)
+    }
+    function ChangeModeToEdit(data){
+        setAdd(false)
+        setCollapseBool(true)
+        // inputRef.current.value ="ee"
+        setSocial_id_Edit(data.social_id)
+        setSocial_link_Edit(data.social_link)
+        setSocial_type_Edit(data.social_type)
+    }
     function ChangeCollapse(){
         setCollapseBool(!collapseBool)
     }
@@ -68,13 +95,34 @@ export default function UserAccount() {
         setCollapseBool(false);
         setSocial('')
     }
-    function SubmitRecord(){
-        // console.log(record.);
-        let id = 1;
-        setRecord(pre => [...pre , {social_type:social, social_typeIcon: socialIcon ,social_id:document.getElementById('id').value, social_link:document.getElementById('link').value }])
+    function CancelBtn_OnEditMode(){
+        setCollapseBool(false);
         setSocial('')
-        // setCollapseBool(false);
+        ChangeModeToAdd()
 
+    }
+
+    function SubmitRecord(){
+        setId(pre=>pre+1)
+        setRecord(pre => [...pre , {id:id ,social_type:social, social_typeIcon: socialIcon ,social_id:document.getElementById('id').value, social_link:document.getElementById('link').value }])
+        setSocial('')
+
+    }
+    function GetIdToEdit(id){
+        setGetIdToEdit(id)
+    }
+    function EditRecord(){
+        record.forEach((item) => {
+            if(item.id === getIdToEdit){
+              let i = {...item.social_id = document.getElementById('id').value,...item.social_link = document.getElementById('link').value,...item.social_type = social}
+            //   let i = {...item.social_id="ddd"}
+              setRecord(pre=> [...pre])
+            }
+        });
+        setSocial('')
+        ChangeModeToAdd()
+        ChangeCollapse()
+        
     }
     function DeleteRecord(_item){
         setRecord(
@@ -114,7 +162,10 @@ export default function UserAccount() {
     <RecordContext.Provider value={
         {
             record : record,
-            DeleteRecord :DeleteRecord
+            DeleteRecord :DeleteRecord,
+            ChangeModeToAdd:ChangeModeToAdd,
+            ChangeModeToEdit:ChangeModeToEdit,
+            GetIdToEdit : GetIdToEdit
         }
     }>
         <ThemeProvider theme={theme}>
@@ -148,11 +199,20 @@ export default function UserAccount() {
                         <Typography style={{fontSize:12,color:'#909eab' , textAlign:'right', marginRight:5}} >
                             مسیرهای ارتباطی
                         </Typography>
-                        <Button onClick={()=>ChangeCollapse()} style={{marginTop:10, color:"#ffa82e"}}
-                        endIcon={<AddIcon/>}
-                        >
-                            افزودن مسیر ارتباطی
-                        </Button>
+                        {
+                            add?
+                            <Button onClick={()=>ChangeCollapse()} style={{marginTop:10, color:"#ffa82e"}}
+                            endIcon={<AddIcon/>}
+                            >
+                                افزودن مسیر ارتباطی
+                            </Button>
+                            :
+                            <Button onClick={()=>ChangeCollapse()} style={{marginTop:10, color:"#ffa82e"}}
+                            endIcon={<EditIcon/>}
+                            >
+                                ویرایش مسیر ارتباطی
+                            </Button>
+                        }
                         
                         <Collapse in={collapseBool} style={{width:'100%'}}>
                             <Box
@@ -167,16 +227,24 @@ export default function UserAccount() {
                                 alignItems:'end',
                                 marginTop:15
                             }}>
-                                <Typography>
-                                افزودن مسیر ارتباطی
-                                </Typography>
+                                {
+                                    add?
+                                    <Typography>
+                                    افزودن مسیر ارتباطی
+                                    </Typography>
+                                    :
+                                    <Typography>
+                                    ویرایش مسیر ارتباطی <span>{Social_type_Edit}</span>
+                                    </Typography>
+                                }
                                 <Box sx={{width:'100%',display:'flex' ,flexDirection:'row', justifyContent:'space-evenly' ,marginTop:15}}>
-
-                                    <StyledTextField id="id" label="(ID) آی دی" variant="standard" style={{ width:'31%', direction:'rtl'}}/>
-                                    <StyledTextField id="link" label="لینک" variant="standard" style={{width:'31%', direction:'rtl'}}/>
-                                    <StyledTextField id="type" select value={social} onChange={handleChange} style={{width:'31%', direction:'rtl'}}  label="نوع*" variant="standard" >
+                                {/*ref={add?null:inputRef}   */}
+                                    {console.log("render")}
+                                    <StyledTextField helperText={add?null:"مقدار قبلی: "+Social_id_Edit}   id="id" label="(ID) آی دی" variant="standard" style={{ width:'31%', direction:'rtl'}}></StyledTextField>
+                                    <StyledTextField helperText={add?null:"مقدار قبلی: "+Social_link_Edit} id="link" label="لینک" variant="standard" style={{width:'31%', direction:'rtl'}}/>
+                                    <StyledTextField helperText={add?null:"مقدار قبلی: "+Social_type_Edit} value={social} id="type" select onChange={handleChange} style={{width:'31%', direction:'rtl'}}  label="نوع*" variant="standard" >
                                     {socials.map((option) => (
-                                        <MenuItem  dir="rtl" key={option.value} value={option.value}>
+                                    <MenuItem  dir="rtl" key={option.value} value={option.value}>
                                         <span style={{display:'flex', alignItems:'self-end'}}>{option.icon}{option.value}</span>
                                     </MenuItem>
                                     ))}
@@ -185,12 +253,27 @@ export default function UserAccount() {
                                 </Box>
 
                                 <Box sx={{width:'100%'}}>
-                                    <Button onClick={()=>SubmitRecord()} variant="contained" style={{marginTop:25 , marginRight:15 , borderRadius:8 , background:'#ffa82e', position:'relative' , left:0 ,border:'0.5px solid #ffa82e'}}>
+                                    {
+                                        add?
+                                        <Button onClick={()=>SubmitRecord()} variant="contained" style={{marginTop:25 , marginRight:15 , borderRadius:8 , background:'#ffa82e', position:'relative' , left:0 ,border:'0.5px solid #ffa82e'}}>
                                         ثبت مسیر ارتباطی
-                                    </Button>
-                                    <Button onClick={()=>CancelBtn()} variant="contained" style={{marginTop:25 , borderRadius:8 , position:'relative' , left:0 ,background:'transparent',border:'0.5px solid rgba(255, 255, 240, 0.308)', color:"#fff" }}>
+                                        </Button>
+                                        :
+                                        <Button onClick={()=>EditRecord()} variant="contained" style={{marginTop:25 , marginRight:15 , borderRadius:8 , background:'#ffa82e', position:'relative' , left:0 ,border:'0.5px solid #ffa82e'}}>
+                                         <span style={{marginRight:4}}>{Social_type_Edit}</span>ویرایش مسیر ارتباطی   
+                                        </Button>
+                                    }
+                                    {
+                                        add?
+                                        <Button onClick={()=>CancelBtn()} variant="contained" style={{marginTop:25 , borderRadius:8 , position:'relative' , left:0 ,background:'transparent',border:'0.5px solid rgba(255, 255, 240, 0.308)', color:"#fff" }}>
                                         انصراف
-                                    </Button>
+                                        </Button>
+                                    :
+                                        <Button onClick={()=>CancelBtn_OnEditMode()} variant="contained" style={{marginTop:25 , borderRadius:8 , position:'relative' , left:0 ,background:'transparent',border:'0.5px solid rgba(255, 255, 240, 0.308)', color:"#fff" }}>
+                                        انصراف
+                                        </Button>
+                                    }
+
                                 </Box>
 
                             </Box>
