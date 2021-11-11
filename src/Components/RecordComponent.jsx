@@ -10,10 +10,12 @@ export default function RecordComponent(props) {
     const DeleteRecord = recordData.DeleteRecord;
     let data = props.data;
     let [open,setOpen] = useState(false)
+
     function Delete(){
         if(document.getElementById('delete').value === "تایید")
         {
             DeleteRecord(data)
+            handleClose()
         }
     }
     const handleClickOpen = () => {
@@ -97,7 +99,7 @@ export default function RecordComponent(props) {
 
                 <Box sx={{background:'#202a34' , marginTop:50, display:'flex', alignItems:'end'}}>
                 <Button variant="text" onClick={()=>Delete()} style={{color:'#f84b46',marginRight:5}}>حذف</Button>
-                <Button variant="text" onClick={()=>{}} style={{color:'#ffa82e'}}>انصراف</Button>
+                <Button variant="text" onClick={()=>handleClose()} style={{color:'#ffa82e'}}>انصراف</Button>
                 </Box>
                 </DialogContent>
             </Dialog>

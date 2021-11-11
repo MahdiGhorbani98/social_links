@@ -73,6 +73,8 @@ export default function UserAccount() {
         let id = 1;
         setRecord(pre => [...pre , {social_type:social, social_typeIcon: socialIcon ,social_id:document.getElementById('id').value, social_link:document.getElementById('link').value }])
         setSocial('')
+        // setCollapseBool(false);
+
     }
     function DeleteRecord(_item){
         setRecord(
