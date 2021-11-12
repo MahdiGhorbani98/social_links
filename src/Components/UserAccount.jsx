@@ -14,7 +14,7 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import RecordComponent from './RecordComponent'
 import EditIcon from '@mui/icons-material/Edit';
 import { useForm } from "react-hook-form";
-
+import axios from 'axios';
 export const RecordContext = createContext()
 
 export default function UserAccount() {
@@ -111,7 +111,9 @@ export default function UserAccount() {
 
     function SubmitRecord(){
         setId(pre=>pre+1)
-        setRecord(pre => [...pre , {id:id ,social_type:social, social_typeIcon: socialIcon ,social_id:document.getElementById('id').value, social_link:document.getElementById('link').value }])
+        // setRecord(pre => [...pre , {id:id ,social_type:social, social_typeIcon: socialIcon ,social_id:document.getElementById('id').value, social_link:document.getElementById('link').value }])
+        axios.post("http://localhost:3030/socials" , {"social_id":document.getElementById('id').value, "social_link":document.getElementById('link').value,"social_type":social })
+        .then(response => setRecord(pre => [...pre , response.data]) )
         setSocial('')
         reset();
     }
@@ -119,13 +121,15 @@ export default function UserAccount() {
         setGetIdToEdit(id)
     }
     function EditRecord(){
-        record.forEach((item) => {
+        axios.put(`http://localhost:3030/socials/${getIdToEdit}` , {"social_id":document.getElementById('id').value, "social_link":document.getElementById('link').value,"social_type":social })
+        // .then(response => setRecord(pre => [...pre , response.data]) )
+        .then(record.forEach((item) => {
             if(item.id === getIdToEdit){
               let i = {...item.social_id = document.getElementById('id').value,...item.social_link = document.getElementById('link').value,...item.social_type = social}
             //   let i = {...item.social_id="ddd"}
               setRecord(pre=> [...pre])
             }
-        });
+        }))
         setSocial('')
         reset();
 
@@ -133,10 +137,14 @@ export default function UserAccount() {
         ChangeCollapse()
         
     }
-    function DeleteRecord(_item){
-        setRecord(
-            record.filter(item=> item !== _item)
-        )
+    function DeleteRecord(data){
+        // setRecord(
+        //     record.filter(item=> item !== data)
+        // )
+        axios.delete(`http://localhost:3030/socials/${data.id}`)
+        .then(() => setRecord(
+            record.filter(item=> item !== data)
+        ))
     }
     const StyledTextField = withStyles({
         root: {
@@ -166,6 +174,11 @@ export default function UserAccount() {
           },
         },
     });
+
+    useEffect(() => {
+      axios.get('http://localhost:3030/socials')
+      .then(data=>setRecord(data.data))  
+    },[])
     
     return (
     <RecordContext.Provider value={
@@ -261,7 +274,7 @@ export default function UserAccount() {
                                     {errors.exampleRequired2?.type==="pattern" && <span className="error"> باشد http باید شامل  </span>}
                                     </div>
 
-                                    <StyledTextField helperText={add?null:"مقدار قبلی: "+Social_type_Edit} value={social} id="type" select onChange={handleChange} style={{width:'31%', direction:'rtl'}}  label="نوع*" variant="standard" >
+                                    <StyledTextField required helperText={add?null:"مقدار قبلی: "+Social_type_Edit} value={social} id="type" select onChange={handleChange} style={{width:'31%', direction:'rtl'}}  label="نوع" variant="standard" >
                                     {socials.map((option) => (
                                     <MenuItem  dir="rtl" key={option.value} value={option.value}>
                                         <span style={{display:'flex', alignItems:'self-end'}}>{option.icon}{option.value}</span>

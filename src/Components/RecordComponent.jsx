@@ -4,13 +4,45 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import EditIcon from '@mui/icons-material/Edit';
 import { withStyles } from "@material-ui/core/styles";
 import UseRecords from '../ContextHook';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import FacebookIcon from '@mui/icons-material/Facebook';
+import TelegramIcon from '@mui/icons-material/Telegram';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import LanguageIcon from '@mui/icons-material/Language';
+import TwitterIcon from '@mui/icons-material/Twitter';
 
 export default function RecordComponent(props) {
     const recordData = UseRecords();
     const DeleteRecord = recordData.DeleteRecord;
     let data = props.data;
-    let [open,setOpen] = useState(false)
 
+    let social_typeIcon ;
+    switch (data.social_type) {
+        case "اینستاگرام":
+            social_typeIcon=<InstagramIcon style={{color:"#fff", marginLeft:10}}/>
+            break;
+        case "فیسبوک":
+            social_typeIcon=<FacebookIcon style={{color:"#fff", marginLeft:10}}/>
+            break;
+        case "تلگرام":
+            social_typeIcon=<TelegramIcon style={{color:"#fff", marginLeft:10}}/>
+            break;
+        case "توییتر":
+            social_typeIcon=<TwitterIcon style={{color:"#fff", marginLeft:10}}/>
+            break;
+        case "لینکداین":
+            social_typeIcon=<LinkedInIcon style={{color:"#fff", marginLeft:10}}/>
+            break;
+        case "سایت":
+            social_typeIcon=<LanguageIcon style={{color:"#fff", marginLeft:10}}/>
+            break;
+    
+        default:
+            break;
+    }
+
+    let [open,setOpen] = useState(false)
+    console.log(data);
     function Delete(){
         if(document.getElementById('delete').value === "تایید")
         {
@@ -61,14 +93,15 @@ export default function RecordComponent(props) {
         >
             <Box
             sx={{
-                width:"65%",
+                width:"75%",
                 display:'flex',
                 flexDirection:'row-reverse',
                 justifyContent:'space-between',
                 
             }}>
                 <Typography>
-                <span style={{display:'flex', alignItems:'self-end'}}>{data.social_type}{data.social_typeIcon}</span>
+                {/* {data.social_typeIcon} */}
+                <span style={{display:'flex', alignItems:'self-end'}}>{data.social_type}{social_typeIcon}</span>
                 </Typography>
                 <Typography>
                 <span style={{display:'flex', alignItems:'center' }}>{"@"+data.social_id}<span style={{fontSize:12 , color:"#909eab",marginLeft:5}}>:(ID) آی دی</span></span>
