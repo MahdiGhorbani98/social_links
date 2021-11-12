@@ -39,6 +39,10 @@ body{
     color: #ffa82e;
     cursor: pointer;
     text-decoration: none;
+    overflow-x: scroll;
+    width: 300px;
+    height:25px
+;
 }
 .spanLink:hover{
     text-decoration: underline;
@@ -53,3 +57,36 @@ body{
     font-family: 'Vazir', sans-serif !important
 
 }
+
+.error_reactHookForm{
+    display: flex;
+    flex-direction: column;
+    width: 31%;
+
+}
+.error{
+    font-family: 'Vazir', sans-serif !important;
+    font-size: 12px;
+    color: #f84b46;
+    margin-top: 6px;
+    text-align: right;
+    
+}
+
+.spanLink::-webkit-scrollbar {
+    width: 0px;
+    height: 4px;
+  }
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #404953; 
+    border-radius: 3px;
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #909eab; 
+    border-radius: 3px;
+
+  }
+  

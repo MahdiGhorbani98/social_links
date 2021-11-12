@@ -13,21 +13,25 @@ import LanguageIcon from '@mui/icons-material/Language';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import RecordComponent from './RecordComponent'
 import EditIcon from '@mui/icons-material/Edit';
+import { useForm } from "react-hook-form";
 
 export const RecordContext = createContext()
 
 export default function UserAccount() {
+    const [social, setSocial] = React.useState(null);
     const [record, setRecord] = React.useState([]);
     const [id, setId] = React.useState(0);
     const [getIdToEdit, setGetIdToEdit] = React.useState();
     const [Social_id_Edit, setSocial_id_Edit] = React.useState();
     const [Social_link_Edit, setSocial_link_Edit] = React.useState();
     const [Social_type_Edit, setSocial_type_Edit] = React.useState();
-    const inputRef = useRef();
-
     const [add, setAdd] = React.useState(true);
-    const [social, setSocial] = React.useState('');
     const [socialIcon, setSocialIcon] = React.useState('');
+    const { register, handleSubmit ,formState: { errors } , reset } = useForm();
+    const onSubmit = () => SubmitRecord();
+    const onSubmitEdit = () => EditRecord();
+
+    const inputRef = useRef();
     const handleChange = (event) => {
         setSocial(event.target.value);
         for (let i = 0; i < socials.length; i++) {
@@ -94,10 +98,13 @@ export default function UserAccount() {
     function CancelBtn(){
         setCollapseBool(false);
         setSocial('')
+        reset();
+
     }
     function CancelBtn_OnEditMode(){
-        setCollapseBool(false);
+        reset();
         setSocial('')
+        setCollapseBool(false);
         ChangeModeToAdd()
 
     }
@@ -106,7 +113,7 @@ export default function UserAccount() {
         setId(pre=>pre+1)
         setRecord(pre => [...pre , {id:id ,social_type:social, social_typeIcon: socialIcon ,social_id:document.getElementById('id').value, social_link:document.getElementById('link').value }])
         setSocial('')
-
+        reset();
     }
     function GetIdToEdit(id){
         setGetIdToEdit(id)
@@ -120,6 +127,8 @@ export default function UserAccount() {
             }
         });
         setSocial('')
+        reset();
+
         ChangeModeToAdd()
         ChangeCollapse()
         
@@ -237,11 +246,21 @@ export default function UserAccount() {
                                     ویرایش مسیر ارتباطی <span>{Social_type_Edit}</span>
                                     </Typography>
                                 }
+                                <form onSubmit={handleSubmit(add?onSubmit:onSubmitEdit)} style={{width:'100%'}}>
+
                                 <Box sx={{width:'100%',display:'flex' ,flexDirection:'row', justifyContent:'space-evenly' ,marginTop:15}}>
-                                {/*ref={add?null:inputRef}   */}
-                                    {console.log("render")}
-                                    <StyledTextField helperText={add?null:"مقدار قبلی: "+Social_id_Edit}   id="id" label="(ID) آی دی" variant="standard" style={{ width:'31%', direction:'rtl'}}></StyledTextField>
-                                    <StyledTextField helperText={add?null:"مقدار قبلی: "+Social_link_Edit} id="link" label="لینک" variant="standard" style={{width:'31%', direction:'rtl'}}/>
+
+                                    <div className="error_reactHookForm">
+                                    <StyledTextField {...register("exampleRequired1", { required: true  })} helperText={add?null:"مقدار قبلی: "+Social_id_Edit}   id="id" label="(ID) آی دی" variant="standard" style={{ width:'100%', direction:'rtl'}}></StyledTextField>
+                                    {errors.exampleRequired1 && <span className="error">پرکردن این فیلد الزامی است</span>}
+                                    </div>
+
+                                    <div className="error_reactHookForm">
+                                    <StyledTextField {...register("exampleRequired2", { required: true ,pattern: /^[http]/i })} helperText={add?null:"مقدار قبلی: "+Social_link_Edit} id="link" label="لینک" variant="standard" style={{width:'100%', direction:'rtl'}}/>
+                                    {errors.exampleRequired2?.type==="required" && <span className="error">پرکردن این فیلد الزامی است</span>}
+                                    {errors.exampleRequired2?.type==="pattern" && <span className="error"> باشد http باید شامل  </span>}
+                                    </div>
+
                                     <StyledTextField helperText={add?null:"مقدار قبلی: "+Social_type_Edit} value={social} id="type" select onChange={handleChange} style={{width:'31%', direction:'rtl'}}  label="نوع*" variant="standard" >
                                     {socials.map((option) => (
                                     <MenuItem  dir="rtl" key={option.value} value={option.value}>
@@ -255,17 +274,17 @@ export default function UserAccount() {
                                 <Box sx={{width:'100%'}}>
                                     {
                                         add?
-                                        <Button onClick={()=>SubmitRecord()} variant="contained" style={{marginTop:25 , marginRight:15 , borderRadius:8 , background:'#ffa82e', position:'relative' , left:0 ,border:'0.5px solid #ffa82e'}}>
+                                        <Button type="submit"  variant="contained" style={{marginTop:25 , marginRight:15 , borderRadius:8 , background:'#ffa82e', position:'relative' , left:0 ,border:'0.5px solid #ffa82e'}}>
                                         ثبت مسیر ارتباطی
                                         </Button>
                                         :
-                                        <Button onClick={()=>EditRecord()} variant="contained" style={{marginTop:25 , marginRight:15 , borderRadius:8 , background:'#ffa82e', position:'relative' , left:0 ,border:'0.5px solid #ffa82e'}}>
+                                        <Button type="submit" variant="contained" style={{marginTop:25 , marginRight:15 , borderRadius:8 , background:'#ffa82e', position:'relative' , left:0 ,border:'0.5px solid #ffa82e'}}>
                                          <span style={{marginRight:4}}>{Social_type_Edit}</span>ویرایش مسیر ارتباطی   
                                         </Button>
                                     }
                                     {
                                         add?
-                                        <Button onClick={()=>CancelBtn()} variant="contained" style={{marginTop:25 , borderRadius:8 , position:'relative' , left:0 ,background:'transparent',border:'0.5px solid rgba(255, 255, 240, 0.308)', color:"#fff" }}>
+                                        <Button  onClick={()=>CancelBtn()} variant="contained" style={{marginTop:25 , borderRadius:8 , position:'relative' , left:0 ,background:'transparent',border:'0.5px solid rgba(255, 255, 240, 0.308)', color:"#fff" }}>
                                         انصراف
                                         </Button>
                                     :
@@ -275,6 +294,7 @@ export default function UserAccount() {
                                     }
 
                                 </Box>
+                                </form>
 
                             </Box>
                         </Collapse>

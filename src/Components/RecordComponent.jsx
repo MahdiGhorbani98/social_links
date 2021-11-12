@@ -61,7 +61,7 @@ export default function RecordComponent(props) {
         >
             <Box
             sx={{
-                width:"45%",
+                width:"65%",
                 display:'flex',
                 flexDirection:'row-reverse',
                 justifyContent:'space-between',
@@ -74,7 +74,7 @@ export default function RecordComponent(props) {
                 <span style={{display:'flex', alignItems:'center' }}>{"@"+data.social_id}<span style={{fontSize:12 , color:"#909eab",marginLeft:5}}>:(ID) آی دی</span></span>
                 </Typography>
 
-                <Typography>
+                <Typography >
                 <span style={{display:'flex', alignItems:'center' }}><a href={data.social_link} target="_blank" className="spanLink">{data.social_link}</a> <span style={{fontSize:12 , color:"#909eab",marginLeft:5}}>:لینک</span></span>
                 </Typography>
             </Box>
